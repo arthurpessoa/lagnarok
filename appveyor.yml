@@ -11,5 +11,5 @@ deploy:
 - provider: GitHub
   auth_token:
     secure: yNUbKU1WhU2hfNQsbBhIhq4xBdfcGX944mppUYnp+qX/xlpmnEYwWohxwW8DYLc8
-  artifact: '*.*'
+  artifact: '**\*.dll'
   force_update: true
