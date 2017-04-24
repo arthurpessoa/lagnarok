@@ -14,7 +14,7 @@ void WinsockHook::hook() {
 	hookAPI.hook(TEXT("ws2_32.dll"), "connect", (LPVOID*)nConnect, connectHook);
 	hookAPI.hook(TEXT("ws2_32.dll"), "send", (LPVOID*)nSend, sendHook);
 	hookAPI.hook(TEXT("ws2_32.dll"), "recv", (LPVOID*)nRecv, recvHook);
-	//hookAPI.hook(TEXT("ws2_32.dll"), "select", (LPVOID*)nSelect, selectHook); //TODO: Fix select hooking
+	hookAPI.hook(TEXT("ws2_32.dll"), "select", (LPVOID*)nSelect, selectHook);
 	hookAPI.hook(TEXT("ws2_32.dll"), "closesocket", (LPVOID*)nClosesocket, closesocketHook);
 	MessageBoxA(NULL, "Hooked!", "Lagnarok", MB_OK);
 }
@@ -36,12 +36,9 @@ int __stdcall WinsockHook::nClosesocket(SOCKET s) {
 }
 
 int __stdcall WinsockHook::nSelect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout) {
-		hookAPI.unhook(TEXT("ws2_32.dll"), "select", recvHook);
-			
+		hookAPI.unhook(TEXT("ws2_32.dll"), "select", selectHook);
 		int result = select(nfds, readfds, writefds, exceptfds, timeout);
-
-		hookAPI.hook(TEXT("ws2_32.dll"), "select", (LPVOID*)nRecv, recvHook);
-
+		hookAPI.hook(TEXT("ws2_32.dll"), "select", (LPVOID*)nSelect, selectHook);
 		return result;
 }
 
@@ -50,7 +47,6 @@ int __stdcall WinsockHook::nSend(SOCKET s, const char *buf, int len, int flags)
 	hookAPI.unhook(TEXT("ws2_32.dll"), "send", sendHook);
 
 	int result = send(s, buf, len, flags);
-
 
 	hookAPI.hook(TEXT("ws2_32.dll"), "send", (LPVOID*)nSend, sendHook);
 	return result;
