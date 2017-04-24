@@ -6,10 +6,11 @@ build:
   project: lagnarok.sln
   verbosity: minimal
 artifacts:
-- path: lagnarok.dll
+- path: $(configuration)\*.dll
+  name: dlls
 deploy:
 - provider: GitHub
   auth_token:
     secure: yNUbKU1WhU2hfNQsbBhIhq4xBdfcGX944mppUYnp+qX/xlpmnEYwWohxwW8DYLc8
-  artifact: '*.*'
+  artifact: dlls
   force_update: true
