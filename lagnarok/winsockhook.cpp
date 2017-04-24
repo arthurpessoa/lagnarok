@@ -3,7 +3,6 @@
 #include <iostream>
 #include <fstream>
 
-
 BYTE WinsockHook::sendHook[6];
 BYTE WinsockHook::recvHook[6];
 BYTE WinsockHook::connectHook[6];
@@ -69,7 +68,12 @@ int __stdcall WinsockHook::nConnect(SOCKET sock, const struct sockaddr* name, in
 	hookAPI.unhook(TEXT("ws2_32.dll"), "send", sendHook); //To connect into a SSL we need use the real send & recv functions!
 	hookAPI.unhook(TEXT("ws2_32.dll"), "recv", recvHook);
 
+
+	int enabled = TRUE;
+	int disabled = FALSE;
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (const char *)&enabled, sizeof(int));
 	int result = connect(sock, name, namelen);
+	
 
 	hookAPI.hook(TEXT("ws2_32.dll"), "recv", (LPVOID*)nRecv, recvHook);
 	hookAPI.hook(TEXT("ws2_32.dll"), "send", (LPVOID*)nSend, sendHook);
